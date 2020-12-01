@@ -1,0 +1,69 @@
+---
+kind: pipeline
+type: docker
+name: default
+globals:
+  - &docker_creds
+    username:
+      from_secret: docker_user
+    password:
+      from_secret: docker_password
+steps:
+  - name: prepare
+    image: busybox
+    commands:
+      - mkdir -p /cache/${DRONE_REPO}/docker
+    volumes:
+      - name: cache
+        path: /cache
+  - name: env
+    image: nightfuryest/drone-plugin-secret-to-env
+    settings:
+      template: .deploy/.env.prod.template
+      file: .env
+      envs:
+        - APP_KEY
+      #   - DB_HOST
+      #   - DB_PORT
+      #   - DB_DATABASE
+      #   - DB_USERNAME
+      #   - DB_PASSWORD
+      APP_KEY:
+        from_secret: APP_KEY
+      # DB_HOST:
+      #   from_secret: DB_HOST
+      # DB_PORT:
+      #   from_secret: DB_PORT
+      # DB_DATABASE:
+      #   from_secret: DB_DATABASE
+      # DB_USERNAME:
+      #   from_secret: DB_USERNAME
+      # DB_PASSWORD:
+      #   from_secret: DB_PASSWORD
+    when:
+      branch:
+        - production
+  - name: build
+    image: plugins/docker
+    settings:
+      registry: docker-registry.vicoders.com
+      repo: docker-registry.vicoders.com/webpress_application_service
+      tags:
+        - ${DRONE_COMMIT_BRANCH}
+      create_repository: true
+      use_cache: true
+      <<: *docker_creds
+    volumes:
+      - name: docker
+        path: /var/lib/docker
+volumes:
+  - name: cache
+    host:
+      path: /var/cache
+  - name: docker
+    host:
+      path: /var/cache/${DRONE_REPO}/docker
+
+trigger:
+  branch:
+    - production

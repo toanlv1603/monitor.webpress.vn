@@ -1,0 +1,30 @@
+[
+  {
+    "targets": ["localhost:9090"],
+    "labels": {
+      "env": "prod",
+      "job": "prometheus"
+    }
+  },
+  {
+    "targets": ["cadvisor:8080"],
+    "labels": {
+      "env": "prod",
+      "job": "cadvisor"
+    }
+  },
+  {
+    "targets": ["node-exporter:9100"],
+    "labels": {
+      "env": "prod",
+      "job": "node"
+    }
+  },
+  {
+    "targets": ["45.76.148.212:9323"],
+    "labels": {
+      "env": "prod",
+      "job": "docker"
+    }
+  }
+]
