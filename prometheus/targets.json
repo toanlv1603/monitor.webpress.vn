@@ -42,7 +42,7 @@
     }
   },
   {
-    "targets": ["http://api.webpress.vn/prometheus/metrics"],
+    "targets": ["api.webpress.vn/prometheus"],
     "labels": {
       "env": "prod",
       "job": "Webpress API Gateway"
