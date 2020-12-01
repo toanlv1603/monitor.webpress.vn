@@ -21,17 +21,10 @@
     }
   },
   {
-    "targets": ["node-exporter:9100"],
+    "targets": ["45.77.172.78:9100", "node-exporter:9100"],
     "labels": {
       "env": "prod",
-      "job": "node"
-    }
-  },
-  {
-    "targets": ["45.77.172.78:9100"],
-    "labels": {
-      "env": "prod",
-      "job": "node"
+      "job": "Vicoders Internal Service"
     }
   },
   {
