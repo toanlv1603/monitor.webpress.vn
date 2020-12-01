@@ -40,5 +40,12 @@
       "env": "prod",
       "job": "windows-server"
     }
+  },
+  {
+    "targets": ["api.webpress.vn/prometheus/metrics"],
+    "labels": {
+      "env": "prod",
+      "job": "Webpress API Gateway"
+    }
   }
 ]
