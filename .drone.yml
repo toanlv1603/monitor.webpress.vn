@@ -6,6 +6,7 @@ steps:
   - name: rsync
     image: drillster/drone-rsync
     hosts: ["45.76.148.212"]
+    PORTS: 1080
     user: root
     key:
       from_secret: SERVER_SECRET_KEY
