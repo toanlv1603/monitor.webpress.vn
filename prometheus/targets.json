@@ -14,6 +14,13 @@
     }
   },
   {
+    "targets": ["45.76.148.212:9323"],
+    "labels": {
+      "env": "prod",
+      "job": "docker"
+    }
+  },
+  {
     "targets": ["node-exporter:9100"],
     "labels": {
       "env": "prod",
@@ -35,10 +42,10 @@
     }
   },
   {
-    "targets": ["45.76.148.212:9323"],
+    "targets": ["123.30.181.75:9182"],
     "labels": {
       "env": "prod",
-      "job": "docker"
+      "job": "window-server"
     }
   }
 ]
