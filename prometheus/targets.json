@@ -31,7 +31,7 @@
     "targets": ["123.30.184.133:9100"],
     "labels": {
       "env": "prod",
-      "job": "node"
+      "job": "linux-server"
     }
   },
   {
