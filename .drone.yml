@@ -5,7 +5,7 @@ name: default
 steps:
   - name: rsync
     image: drillster/drone-rsync
-    hosts: ["45.76.148.212"]
+    hosts: monitor.webpress.vn
     PORTS: 1080
     user: root
     key:
