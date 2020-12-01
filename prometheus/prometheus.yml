@@ -43,6 +43,6 @@ scrape_configs:
   #     - targets: ["45.76.148.212:9323"]
 
   - job_name: "prometheus"
-      file_sd_configs:
-        - files:
+    file_sd_configs:
+      - files:
           - targets.json
