@@ -5,11 +5,14 @@ name: default
 steps:
   - name: rsync
     image: drillster/drone-rsync
-    hosts: monitor.webpress.vn
-    PORTS: 1080
-    user: root
-    key:
-      from_secret: SERVER_SECRET_KEY
-    recursive: true
-    source: .
-    target: /home/monitor.webpress.vn
+    environment:
+      RSYNC_KEY:
+        from_secret: SERVER_SECRET_KEY
+    settings:
+      user: root
+      hosts:
+        - monitor.webpress.vn
+      port: 1080
+      recursive: true
+      source: .
+      target: /home/monitor.webpress.vn
