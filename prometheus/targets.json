@@ -45,7 +45,7 @@
     "targets": ["123.30.181.75:9182"],
     "labels": {
       "env": "prod",
-      "job": "window-server"
+      "job": "windows-server"
     }
   }
 ]
