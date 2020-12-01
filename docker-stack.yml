@@ -1,32 +1,34 @@
-version: '3.7'
+version: "3.7"
 
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
+  prometheus_data: {}
+  grafana_data: {}
 
 networks:
   monitor-net:
+  vcrobot:
+    external: true
 
 services:
-
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./prometheus/:/etc/prometheus/
+      - /home/monitor.webpress.vn/prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--web.enable-lifecycle'
-      - '--web.enable-admin-api'
-    ports:
-      - 9090:9090
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
+    # ports:
+    #   - 9090:9090
     depends_on:
       - cadvisor
-#      - pushgateway
+    #      - pushgateway
     networks:
+      - vcrobot
       - monitor-net
     deploy:
       placement:
@@ -34,6 +36,16 @@ services:
           - node.role==manager
       restart_policy:
         condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prometheus_webpress_vn.rule=Host(`prometheus.webpress.vn`)"
+        - "traefik.http.routers.prometheus_webpress_vn-secure.rule=Host(`prometheus.webpress.vn`)"
+        - "traefik.http.routers.prometheus_webpress_vn.entryPoints=http"
+        - "traefik.http.routers.prometheus_webpress_vn-secure.entryPoints=https"
+        - "traefik.http.routers.prometheus_webpress_vn-secure.tls.certresolver=staging"
+        - "traefik.http.middlewares.prometheus_webpress_vn-redirector.redirectscheme.scheme=https"
+        - "traefik.http.routers.prometheus_webpress_vn.middlewares=prometheus_webpress_vn-redirector"
+        - "traefik.http.services.prometheus_webpress_vn-secure.loadbalancer.server.port=9090"
 
   node-exporter:
     image: prom/node-exporter
@@ -41,19 +53,19 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    command: 
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
+    # ports:
+    #   - 9100:9100
     networks:
       - monitor-net
     deploy:
       mode: global
       restart_policy:
-          condition: on-failure
+        condition: on-failure
 
   alertmanager:
     image: prom/alertmanager
@@ -64,14 +76,14 @@ services:
     networks:
       - monitor-net
     command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
     deploy:
       placement:
         constraints:
-           - node.role==manager
+          - node.role==manager
       restart_policy:
-        condition: on-failure    
+        condition: on-failure
 
   cadvisor:
     image: google/cadvisor
@@ -80,36 +92,44 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - 8080:8080
+    # ports:
+    #   - 8080:8080
     networks:
       - monitor-net
     deploy:
       mode: global
       restart_policy:
-          condition: on-failure
+        condition: on-failure
 
   grafana:
     image: grafana/grafana
     depends_on:
       - prometheus
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
+      # - /home/monitor.webpress.vn/grafana/provisioning/:/etc/grafana/provisioning/
+    # env_file:
+    #   - ./grafana/config.monitoring
     networks:
       - monitor-net
-    user: "472"
     deploy:
       placement:
         constraints:
           - node.role==manager
       restart_policy:
         condition: on-failure
-
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.monitor_webpress_vn.rule=Host(`monitor.webpress.vn`)"
+        - "traefik.http.routers.monitor_webpress_vn-secure.rule=Host(`monitor.webpress.vn`)"
+        - "traefik.http.routers.monitor_webpress_vn.entryPoints=http"
+        - "traefik.http.routers.monitor_webpress_vn-secure.entryPoints=https"
+        - "traefik.http.routers.monitor_webpress_vn-secure.tls.certresolver=staging"
+        - "traefik.http.middlewares.monitor_webpress_vn-redirector.redirectscheme.scheme=https"
+        - "traefik.http.routers.monitor_webpress_vn.middlewares=monitor_webpress_vn-redirector"
+        - "traefik.http.services.monitor_webpress_vn-secure.loadbalancer.server.port=3000"
 #  pushgateway:
 #    image: prom/pushgateway
 #    deploy:
