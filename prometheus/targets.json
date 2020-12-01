@@ -28,6 +28,13 @@
     }
   },
   {
+    "targets": ["123.30.184.133:9100"],
+    "labels": {
+      "env": "prod",
+      "job": "linux-server"
+    }
+  },
+  {
     "targets": ["45.76.148.212:9323"],
     "labels": {
       "env": "prod",
